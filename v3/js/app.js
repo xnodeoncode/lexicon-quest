@@ -260,6 +260,8 @@ async function fetchTerm() {
  * the numbers of wins and losses.
  ********************************************************************************/
 function softReset() {
+  // As long as the data service is available, and the words array has more than 15 words, use it.
+  // Otherwise, use the fallback words.
   if (words.length > 15 && dataServiceAvailable) {
     ranWord = words[Math.floor(Math.random() * words.length)];
   } else {
@@ -267,6 +269,7 @@ function softReset() {
     console.log("using fallback word.");
   }
 
+  // reset the control variables. and update the UI.
   letters = [ranWord.length];
   wrongLetter = [];
   guessesLeft = 10;
@@ -274,6 +277,7 @@ function softReset() {
   console.log("Random Word: " + ranWord);
   underScores = [];
 
+  // Creating underscores based on the length of the word.
   for (var i = 0; i < ranWord.length; i++) {
     underScores.push("_");
   }
