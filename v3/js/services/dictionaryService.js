@@ -6,7 +6,13 @@
  * Import the ApplicationConfiguration class from the appConfig.js file.
  * The ApplicationConfiguration class is used to provide the API key and the API URL.
  ************************************************************************************/
-import { ApplicationConfiguration } from "../../../appConfig.js";
+let ApplicationConfiguration;
+
+if (window.location.hostname === "127.0.0.7") {
+  ApplicationConfiguration = await import("../../../appConfig.js");
+} else {
+  ApplicationConfiguration = await import("./serviceConfiguration.js");
+}
 
 /********************************************************************
  * Class definition.
@@ -22,7 +28,7 @@ export class DictionaryService {
    * init() | Void: This method initializes the API key and the API URL.
    ********************************************************************/
   init() {
-    var appConfig = new ApplicationConfiguration();
+    var appConfig = new ApplicationConfiguration.ApplicationConfiguration();
     this.APIKey = appConfig.APIKey;
     this.RequestUrl = appConfig.APIUrl;
   }
@@ -31,19 +37,23 @@ export class DictionaryService {
    * fetchTerm() | string: This method fetches a term from the dictionary API.
    ********************************************************************/
   async fetchTerm() {
-    try {
-      const response = await fetch(this.RequestUrl, {
-        method: "GET", // string or object
-        headers: {
-          "X-Api-Key": this.APIKey,
-        },
-      });
-      const jsonResponse = await response.json(); //extract JSON from the http response
-      console.log(`New term found. ${jsonResponse}.`);
-      return jsonResponse.word[0];
-    } catch (e) {
-      console.log("fetch word error:", e);
-      throw e;
+    let term = "";
+    if (this.RequestUrl !== null && this.APIKey !== null) {
+      try {
+        const response = await fetch(this.RequestUrl, {
+          method: "GET",
+          headers: {
+            "X-Api-Key": this.APIKey,
+          },
+        });
+        const jsonResponse = await response.json(); //extract JSON from the http response
+        console.log(`New term found. ${jsonResponse}.`);
+        term = jsonResponse.word[0];
+      } catch (e) {
+        console.log("fetch word error:", e);
+        throw e;
+      }
     }
+    return term;
   }
 }
